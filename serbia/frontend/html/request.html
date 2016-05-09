@@ -1,0 +1,74 @@
+<div class="modal fade" id="confirm-modal" data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title">确定</h4>
+            </div>
+            <div class="modal-body">
+                您是否要删除这条数据吗？
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-default" data-dismiss="modal">取消</a>
+                <a href="#" class="btn btn-dark" id="confirm-modal-ok">确定</a>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade " id="flash-modal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="flash-modal-title">提示</h4>
+            </div>
+            <div class="modal-body" id="flash-modal-message">
+                成功
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-dark" data-dismiss="modal">确定</a>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<script type="text/javascript">
+    function confirmOk(url) {
+        if (url) {
+            $('#confirm-modal-ok').attr('href', url);
+        }
+        $('#confirm-modal').modal('show');
+    }
+    function flashView(message, title) {
+        if (message) {
+            $('#flash-modal-message').text(message);
+        }
+        if (title) {
+            $('#flash-modal-title').text(title);
+        }
+        $('#flash-modal').modal('show');
+    }
+
+    // 确定请求
+    function confirmHttp(url, need_confirm=true) {
+        if (need_confirm) {
+            var result = confirm('确定操作吗！');
+            if(!result){
+                return;
+            }
+        }
+        $.ajax({
+            url: url,
+            method: 'POST',
+            // dataType: 'json',
+            success: function (data, textStatus, xhr) {
+                window.location.reload();
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                msg = "Status: " + textStatus + " Error: " + errorThrown
+                title = '发生了未知错误'
+                flashView(msg, title);
+            }
+        });
+    }
+
+</script>

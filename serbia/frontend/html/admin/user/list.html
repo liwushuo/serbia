@@ -1,0 +1,90 @@
+{% extends "admin/layout.html" %}
+{% set active_section = "user" %}
+{% block title %}所有用户{% endblock %}
+
+{% block head_content %}
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="m-b-md">
+  <ul class="breadcrumb">
+      <li><a href="/"><i class="fa fa-home"></i> 首页</a></li>
+      <li class="active"> 所有用户</li>
+  </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="panel b-a">
+  <header class="panel-heading b-b">用户列表</header>
+<!--   <div class="panel-body">
+  </div> -->
+ <div class="row wrapper">
+    <div class="col-sm-9 m-b-xs form-group">
+      <form style="display: inline;"action="{{ url_for('admin.list_users') }}" method="get">
+        <select name="org" class="input-sm form-control input-s-sm inline v-middle">
+          <option value="">所有部门</option>
+          {% for org in orgs %}
+          <option value="{{ org.ou }}" {% if org.ou == org_name %}selected="selected"{% endif %}>{{ org.ou }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-refresh text"></i></button>
+      </form>
+      <form style="display: inline;" action="{{ url_for('admin.list_users') }}" method="get">
+        <select name="group" class="input-sm form-control input-s-sm inline v-middle">
+          <option value="">所有组</option>
+          {% for group in groups %}
+          <option value="{{ group.cn }}" {% if group.cn == group_name %}selected="selected"{% endif %}>{{ group.cn }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-refresh text"></i></button>
+      </form>
+      <a href="{{ url_for('admin.add_user') }}" type="button" class="btn btn-sm btn-info">
+          <i class="fa fa-plus"></i>
+          入职新用户
+      </a>
+    </div>
+    <div class="col-sm-3">
+      <div class="input-group">
+        <input type="text" class="input-sm form-control" placeholder="搜索 uid">
+        <span class="input-group-btn">
+          <button class="btn btn-sm btn-default" type="button">Go!</button>
+        </span>
+      </div>
+    </div>
+  </div>
+  <table class="table m-b-none">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>姓名</th>
+        <th>uid</th>
+        <th>邮箱</th>
+        <th>管理</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{ user.uidNumber }}</td>
+        <td>{{ user.displayName }}</td>
+        <td>{{ user.uid }}</td>
+        <td>{{ user.mail }}</td>
+        <td>
+          <a class="btn btn-xs btn-primary" href="{{ url_for('admin.update_user', uid=user.uid) }}">更新</a>
+        </td>
+      </tr>
+      {% else %}
+        <td>还没有用户~</td>
+      {% endfor %}
+    </tbody>
+  </table>
+{#   <footer class="panel-footer">
+    <div class="row">
+      <div class="col-sm-12 text-right text-center-xs">
+      {% include 'pagination.html' %}
+      </div>
+    </div>
+  </footer> #}
+</section>
+{% endblock %}

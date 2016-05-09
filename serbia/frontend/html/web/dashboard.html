@@ -1,0 +1,38 @@
+{% extends "web/layout.html" %}
+{% set active_section = "dashboard" %}
+{% block title %}管理中心{% endblock %}
+
+{% block head_content %}
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="m-b-md">
+  <h1 class="m-b-none">管理中心</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6">
+    <section class="panel b-a">
+      <header class="panel-heading b-b">我的信息</header>
+      <div class="panel-body">
+        <p>姓名：{{ user.displayName }}</p>
+        <p>企业邮箱：{{ user.mail }}</p>
+        <p>登陆ID：{{ user.uid }}</p>
+      </div>
+    </section>
+  </div>
+  <div class="col-md-6">
+    <section class="panel b-a">
+      <header class="panel-heading b-b">我的权限组</header>
+      <div class="panel-body">
+        {% for group in groups %}
+        <p>{{ group.cn }}</p>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+</div>
+
+{% endblock %}

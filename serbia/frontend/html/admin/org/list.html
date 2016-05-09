@@ -1,0 +1,50 @@
+{% extends "admin/layout.html" %}
+{% set active_section = "org" %}
+{% block title %}所有部门{% endblock %}
+
+{% block head_content %}
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="m-b-md">
+  <ul class="breadcrumb">
+      <li><a href="/"><i class="fa fa-home"></i> 首页</a></li>
+      <li class="active"> 所有部门</li>
+  </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="panel b-a">
+  <header class="panel-heading b-b">部门列表</header>
+<!--   <div class="panel-body">
+  </div> -->
+  <table class="table m-b-none">
+    <thead>
+      <tr>
+        <th>部门名称</th>
+        <th>管理</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for org in orgs %}
+      <tr>
+        <td>{{ org.ou }}</td>
+        <td>
+          <a class="btn btn-xs btn-primary" href="{{ url_for('admin.list_users') }}?org={{ org.ou }}">部门用户</a>
+        </td>
+      </tr>
+      {% else %}
+        <td>还没有部门~</td>
+      {% endfor %}
+    </tbody>
+  </table>
+{#   <footer class="panel-footer">
+    <div class="row">
+      <div class="col-sm-12 text-right text-center-xs">
+      {% include 'pagination.html' %}
+      </div>
+    </div>
+  </footer> #}
+</section>
+{% endblock %}
