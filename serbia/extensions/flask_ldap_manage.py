@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import ldap
-import ldap.modlist as modlist
 import base64
 import sha
+
+import ldap.modlist as modlist
 
 from flask import _app_ctx_stack as stack
 from flask import current_app
@@ -56,11 +57,11 @@ class _LDAPGroup(object):
         self._name = self._url = None
         description = group_dict[1].get('description')
         if description:
-            field_len = len(description.split(','))
+            field_len = len(description)
             if field_len == 2:
-                self._name, self._url = description.split(',')
+                self._name, self._url = description
             else:
-                self._name = description
+                self._name = description[0]
 
 
     def _get_group_dn(self):
@@ -77,7 +78,7 @@ class _LDAPGroup(object):
 
     @property
     def name(self):
-        return self._name
+        return self._name.decode('utf-8')
 
     @property
     def url(self):
@@ -100,12 +101,14 @@ class _LDAPOrg(object):
     attrs = property(_get_org_attrs)
 
     @property
-    def description(self):
-        return self._org_attrs['description'][0]
+    def name(self):
+        name = self._org_attrs.get('description')
+        if name:
+            return name[0].decode('utf-8')
 
     @property
     def ou(self):
-        return self._org_dn.split(',', 1)[0].split('=')[1]
+        return self._org_attrs['ou'][0]
 
 
 class LDAPManage(object):
@@ -127,7 +130,6 @@ class LDAPManage(object):
             return _LDAPUser(records[0])
 
     def get_user_by_email(self, email):
-        print email
         ldap_filter = '(&(objectclass=posixAccount)(mail=%s))' % email
         records = self.con.search_s(self.base_dn, ldap.SCOPE_SUBTREE, ldap_filter)
         if records:
@@ -138,6 +140,12 @@ class LDAPManage(object):
         records = self.con.search_s(self.base_dn, ldap.SCOPE_SUBTREE, ldap_filter)
         if records:
             return _LDAPGroup(records[0])
+
+    def get_org(self, org_ou):
+        ldap_filter = '(&(objectclass=organizationalUnit)(ou=%s))' % org_ou
+        records = self.con.search_s(self.base_dn, ldap.SCOPE_SUBTREE, ldap_filter)
+        if records:
+            return _LDAPOrg(records[0])
 
     def _get_next_uid(self):
         ldap_filter = '(objectClass=posixAccount)'
@@ -159,7 +167,8 @@ class LDAPManage(object):
     def list_groups(self):
         ldap_filter = '(objectClass=posixGroup)'
         groups = self.con.search_s(self.group_ou, ldap.SCOPE_SUBTREE, ldap_filter)
-        return [_LDAPGroup(group) for group in groups]
+        groups = [_LDAPGroup(group) for group in groups]
+        return sorted(groups, key=lambda k: k.cn)
 
     def list_orgs(self):
         ldap_filter = '(&(!(ou=people))(objectClass=organizationalUnit))'
@@ -262,20 +271,57 @@ class LDAPManage(object):
 
     def add_group(self, cn, name, url):
         group_dn = 'cn=%s,%s' % (cn, self.group_ou)
+        description = [name]
         if url:
-            name = name + ',' + url
+            description.append(url)
         attrs = {
             'objectClass': ['posixGroup', 'top'],
             'memberUid': [],
             'gidNumber': str(self._get_next_gid()),
             'cn': cn,
-            'description': name,
+            'description': description,
         }
         self.add(group_dn, attrs)
 
+    def add_org(self, org_ou, name):
+        org_dn = 'ou=%s,%s' % (org_ou, self.user_ou)
+        attrs = {
+            'objectClass': ['organizationalUnit', 'top'],
+            'ou': org_ou,
+            'description': name,
+        }
+        self.add(org_dn, attrs)
+
+    def update_org(self, org_ou, name):
+        org_dn = 'ou=%s,%s' % (org_ou, self.user_ou)
+        attrs = {
+            'objectClass': ['organizationalUnit', 'top'],
+            'ou': org_ou,
+            'description': name,
+        }
+        self.update(org_dn, attrs)
+
+    def update_group(self, cn, name, url):
+        group_dn = 'cn=%s,%s' % (cn, self.group_ou)
+        description = [name]
+        if url:
+            description.append(url)
+        attrs = {
+            'cn': cn,
+            'description': description,
+        }
+        self.update(group_dn, attrs)
+
     def add(self, dn, attrs):
-        mod_attrs = modlist.addModlist(attrs)
-        self.con.add_s(dn, mod_attrs)
+        add_attrs = modlist.addModlist(attrs)
+        self.con.add_s(dn, add_attrs)
+
+    def update(self, dn, attrs):
+        # mod_attrs = modlist.modifyModlist(attrs)
+        mod_attrs = []
+        for k,v in attrs.iteritems():
+            mod_attrs.append((ldap.MOD_REPLACE, k, v))
+        self.con.modify_s(dn, mod_attrs)
 
     def archive_user(self, uid):
         user_dn = self.get_user(uid).dn
@@ -290,6 +336,10 @@ class LDAPManage(object):
     def delete_group(self, group_name):
         group_dn = self.get_group(group_name).dn
         self.delete(group_dn)
+
+    def delete_org(self, org_ou):
+        org_dn = 'ou=%s,%s' % (org_ou, self.user_ou)
+        self.delete(org_dn)
 
     def delete(self, dn):
         self.con.delete_s(dn)

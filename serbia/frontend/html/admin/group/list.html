@@ -17,11 +17,16 @@
 {% block content %}
 <section class="panel b-a">
   <header class="panel-heading b-b">分组列表</header>
-<!--   <div class="panel-body">
-  </div> -->
+  <div class="panel-body">
+      <a href="{{ url_for('admin.add_group') }}" type="button" class="btn btn-sm btn-info">
+          <i class="fa fa-plus"></i>
+          添加分组
+      </a>
+  </div>
   <table class="table m-b-none">
     <thead>
       <tr>
+        <th>分组ID</th>
         <th>分组名</th>
         <th>管理</th>
       </tr>
@@ -30,8 +35,10 @@
       {% for group in groups %}
       <tr>
         <td>{{ group.cn }}</td>
+        <td>{{ group.name }}</td>
         <td>
           <a class="btn btn-xs btn-primary" href="{{ url_for('admin.list_users') }}?group={{ group.cn }}">组内用户</a>
+          <a class="btn btn-xs btn-primary" href="{{ url_for('admin.update_group', group_cn=group.cn) }}">更新</a>
         </td>
       </tr>
       {% else %}

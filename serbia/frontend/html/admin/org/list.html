@@ -17,11 +17,16 @@
 {% block content %}
 <section class="panel b-a">
   <header class="panel-heading b-b">部门列表</header>
-<!--   <div class="panel-body">
-  </div> -->
+  <div class="panel-body">
+      <a href="{{ url_for('admin.add_org') }}" type="button" class="btn btn-sm btn-info">
+          <i class="fa fa-plus"></i>
+          添加部门
+      </a>
+  </div>
   <table class="table m-b-none">
     <thead>
       <tr>
+        <th>部门ID</th>
         <th>部门名称</th>
         <th>管理</th>
       </tr>
@@ -30,8 +35,10 @@
       {% for org in orgs %}
       <tr>
         <td>{{ org.ou }}</td>
+        <td>{{ org.name }}</td>
         <td>
           <a class="btn btn-xs btn-primary" href="{{ url_for('admin.list_users') }}?org={{ org.ou }}">部门用户</a>
+          <a class="btn btn-xs btn-primary" href="{{ url_for('admin.update_org', org_ou=org.ou) }}">更新</a>
         </td>
       </tr>
       {% else %}

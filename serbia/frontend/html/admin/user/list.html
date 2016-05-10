@@ -25,7 +25,7 @@
         <select name="org" class="input-sm form-control input-s-sm inline v-middle">
           <option value="">所有部门</option>
           {% for org in orgs %}
-          <option value="{{ org.ou }}" {% if org.ou == org_name %}selected="selected"{% endif %}>{{ org.ou }}</option>
+          <option value="{{ org.ou }}" {% if org.ou == org_name %}selected="selected"{% endif %}>{{ org.name }} ({{ org.ou }})</option>
           {% endfor %}
         </select>
         <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-refresh text"></i></button>
@@ -34,7 +34,7 @@
         <select name="group" class="input-sm form-control input-s-sm inline v-middle">
           <option value="">所有组</option>
           {% for group in groups %}
-          <option value="{{ group.cn }}" {% if group.cn == group_name %}selected="selected"{% endif %}>{{ group.cn }}</option>
+          <option value="{{ group.cn }}" {% if group.cn == group_name %}selected="selected"{% endif %}>{{ group.name }} ({{ group.cn }})</option>
           {% endfor %}
         </select>
         <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-refresh text"></i></button>

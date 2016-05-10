@@ -25,10 +25,12 @@
   </div>
   <div class="col-md-6">
     <section class="panel b-a">
-      <header class="panel-heading b-b">我的权限组</header>
+      <header class="panel-heading b-b">我有权限的后台</header>
       <div class="panel-body">
         {% for group in groups %}
-        <p>{{ group.cn }}</p>
+          {% if group.url %}
+          <p><a target="_blank" href="{{ group.url }}">{{ group.name }}</a></p>
+          {% endif %}
         {% endfor %}
       </div>
     </section>
