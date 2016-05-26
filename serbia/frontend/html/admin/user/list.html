@@ -34,7 +34,7 @@
         <select name="group" class="input-sm form-control input-s-sm inline v-middle">
           <option value="">所有组</option>
           {% for group in groups %}
-          <option value="{{ group.cn }}" {% if group.cn == group_name %}selected="selected"{% endif %}>{{ group.cn }} ({{ group.name or '暂无'}})</option>
+          <option value="{{ group.cn }}" {% if group.cn == group_name %}selected="selected"{% endif %}>{{ group.cn }}{% if group.name %} ({{ group.name }}){% endif %}</option>
           {% endfor %}
         </select>
         <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-refresh text"></i></button>

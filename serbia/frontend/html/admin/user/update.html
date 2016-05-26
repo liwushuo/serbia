@@ -24,17 +24,15 @@
   <header class="panel-heading b-b">修改组</header>
   <form class="form-horizontal" action="{{ url_for('admin.update_user_group', uid=user.uid) }}" method="post" data-validate="parsley" id="submitForm">
     <div class="panel-body">
-    {% for group_row in groups|batch(3) %}
-    <div class="row">
+    {% for group_row in groups|slice(2) %}
+    <div class="col-md-6">
       {% for group in group_row %}
-        <div class="col-md-4">
-          <div class="checkbox i-checks">
-            <label>
-              <input name="value" type="checkbox" value="{{ group.cn }}" {% if group.in_group %}checked{% endif %}>
-              <i></i>
-              {{ group.cn }}
-            </label>
-          </div>
+        <div class="checkbox i-checks">
+          <label>
+            <input name="value" type="checkbox" value="{{ group.cn }}" {% if group.in_group %}checked{% endif %}>
+            <i></i>
+            {{ group.cn }}{% if group.name %} ({{ group.name }}){% endif %}
+          </label>
         </div>
       {% endfor %}
     </div>
@@ -58,7 +56,7 @@
           <div class="col-md-8">
             <select name="org" class="form-control">
             {% for org in orgs %}
-            <option value="{{ org.ou }}" {% if org.ou == user.ou %}selected="selected"{% endif %}>{{ org.ou }}</option>
+            <option value="{{ org.ou }}" {% if org.ou == user.ou %}selected="selected"{% endif %}>{{ org.name }} ({{ org.ou }})</option>
             {% endfor %}
             </select>
           </div>
