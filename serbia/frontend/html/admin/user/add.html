@@ -60,7 +60,7 @@
         <div class="col-md-8">
           <select name="org" class="form-control">
             {% for org in orgs %}
-            <option value="{{ org.ou }}">{{ org.ou }}</option>
+            <option value="{{ org.ou }}">{{ org.name }} ({{ org.ou }})</option>
             {% endfor %}
           </select>
         </div>
