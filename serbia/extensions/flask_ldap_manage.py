@@ -269,6 +269,13 @@ class LDAPManage(object):
         }
         self.add(user_dn, attrs)
 
+    def update_user_token(self, uid, token):
+        user_dn = self.get_user(uid).dn
+        mod_attrs = {
+            'telexNumber': token
+        }
+        self.update(user_dn, mod_attrs)
+
     def add_group(self, cn, name, url):
         group_dn = 'cn=%s,%s' % (cn, self.group_ou)
         description = [name]

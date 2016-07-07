@@ -8,6 +8,7 @@ from flask import url_for
 
 from serbia.core import ldap_manage
 from serbia.utils.auth import admin_auth_required
+from serbia.utils.text import gen_random_string
 from . import bp
 
 
@@ -49,6 +50,7 @@ def add_user():
     ldap_manage.client.add_user(displayName.encode('utf-8'), sn.encode('utf-8'), givenName.encode('utf-8'),
                                 uid.encode('utf-8'), password.encode('utf-8'), mail.encode('utf-8'),
                                 cn.encode('utf-8'), org.encode('utf-8'))
+    ldap_manage.client.update_user_token(uid.encode('utf-8'), gen_random_string(15))
     flash(u'用户 %s 创建成功' % displayName, 'success')
     return redirect(url_for('admin.list_users'))
 
@@ -71,6 +73,7 @@ def update_user(uid):
 @bp.route('/users/<uid>/archive', methods=['POST'])
 @admin_auth_required
 def archive_user(uid):
+    ldap_manage.client.update_user_token(uid.encode('utf-8'), gen_random_string(15))
     ldap_manage.client.archive_user(uid.encode('utf-8'))
     flash(u'用户 %s 离职成功' % uid, 'success')
     return redirect(url_for('admin.list_users'))
