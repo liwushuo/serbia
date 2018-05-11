@@ -6,16 +6,19 @@ from functools import wraps
 import requests
 from werkzeug.contrib.cache import SimpleCache
 
-EXMAIL_ID = 'liwushuo'
-EXMAIL_SECRET = 'b2cae7286afb59d06ea768c352c69a5c'
-
 
 class Exmail(object):
-    def __init__(self, client_id, client_secret, access_token_cache_url='exmail:access_token'):
-        self._client_id = client_id
-        self._client_secret = client_secret
+    def __init__(self, app=None):
+        self.app = app
+
+        if app is not None:
+            self.init_app(app)
+
+    def init_app(self, app):
+        self._client_id = app.config['EXMAIL_ID']
+        self._client_secret = app.config['EXMAIL_SECRET']
         self._cache_client = SimpleCache()
-        self.access_token_cache_url = access_token_cache_url
+        self.access_token_cache_url = 'exmail:access_token'
 
     def _gen_access_token(self):
         url = 'https://exmail.qq.com/cgi-bin/token'

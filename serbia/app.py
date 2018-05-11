@@ -10,6 +10,7 @@ from serbia.core import sentry
 from serbia.core import ldap
 from serbia.core import mail
 from serbia.core import ldap_manage
+from serbia.core import exmail
 
 
 def config_from_env(config=None):
@@ -45,6 +46,8 @@ def configure_extensions(app):
     sentry.init_app(app)
 
     ldap_manage.init_app(app)
+
+    exmail.init_app(app)
 
     ldap.init_app(app,
                   users=app.config.get('LDAP_USERS'),
