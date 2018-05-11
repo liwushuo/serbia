@@ -56,10 +56,9 @@ def configure_extensions(app):
 
 
 def configure_blueprints(app):
-    from serbia.controllers import web_bp, admin_bp, api_bp
+    from serbia.controllers import web_bp, admin_bp
     app.register_blueprint(web_bp)
     app.register_blueprint(admin_bp, url_prefix='/gwserbia')
-    app.register_blueprint(api_bp, url_prefix='/api')
 
 
 def configure_filters(app):
