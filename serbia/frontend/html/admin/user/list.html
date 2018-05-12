@@ -72,6 +72,7 @@
         <td>{{ user.mail }}</td>
         <td>
           <a class="btn btn-xs btn-primary" href="{{ url_for('admin.update_user', uid=user.uid) }}">更新</a>
+          <a class="btn btn-xs btn-info" href="{{ url_for('admin.send_user_vpn_bundle', uid=user.uid) }}" onclick="confirm('是否发送 VPN 配置？')">发 VPN 配置</a>
         </td>
       </tr>
       {% else %}

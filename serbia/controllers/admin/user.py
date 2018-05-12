@@ -9,6 +9,8 @@ from flask import url_for
 from serbia.core import ldap_manage
 from serbia.utils.auth import admin_auth_required
 from serbia.utils.text import gen_random_string
+from serbia.service import MailService
+from serbia.service import VPNService
 from . import bp
 
 
@@ -68,6 +70,15 @@ def update_user(uid):
             if group.cn in user_group_ids:
                 group.in_group = True
         return render_template('admin/user/update.html', orgs=orgs, uid=uid, user=user, groups=groups)
+
+
+@bp.route('/users/<uid>/send_vpn_bundle')
+@admin_auth_required
+def send_user_vpn_bundle(uid):
+    user = ldap_manage.client.get_user(uid)
+    bundle = VPNService.build_vpn_bundle(uid)
+    MailService.send_vpn_bundle(user.mail, bundle)
+    return redirect(url_for('admin.list_users'))
 
 
 @bp.route('/users/<uid>/archive', methods=['POST'])
